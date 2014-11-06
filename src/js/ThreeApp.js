@@ -3,6 +3,7 @@
 
     var THREE = require('./lib/three');
     var Stats = require('./lib/Stats');
+    var Hammer = require('./lib/hammer');
     var utils = require('./utils');
 
     var DEFAULT_OPTIONS = {
@@ -34,6 +35,8 @@
         window.addEventListener('resize', this.resize.bind(this), false);
 
         document.body.appendChild(this.renderer.domElement);
+
+        this.hammer = new Hammer(this.renderer.domElement);
 
         if (options.showStats) {
             this.stats = new Stats();

@@ -29,6 +29,10 @@
         //console.debug('Segment', this);
     };
 
+    Segment.prototype.onTap = function() {
+        console.debug('you tapped on me ->', this);
+    };
+
     var DEG2RAD = Math.PI / 180.0;
 
     function createShapePoints(seg) {
@@ -55,15 +59,16 @@
     }
 
     function createGeometry(seg) {
-        seg.shape = new THREE.Shape(seg.shapePoints);
-        seg.geometry = new THREE.ShapeGeometry(seg.shape);
+        var shape = new THREE.Shape(seg.shapePoints);
+        seg.geometry = new THREE.ShapeGeometry(shape);
     }
 
     function createMesh(seg) {
         seg.mesh = new THREE.Mesh(seg.geometry,
                 new THREE.MeshBasicMaterial({ color: seg.baseColor /*0x333333*/, transparent: true, opacity: 0.8 }));
-        //seg.meshWireframe = new THREE.Mesh(seg.geometry,
-                //new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true }));
+
+        seg.mesh.toroidySegment = seg;
+        seg.model.interactiveObjects.push(seg.mesh);
     }
 
     module.exports = Segment;

@@ -33,7 +33,6 @@
         if (DEBUG) {
             window.THREE = THREE;
             window.threeApp = app;
-            console.debug("hej toroidy");
         }
 
         //init_dat_gui();
@@ -46,7 +45,10 @@
 
     function init(app) {
 
-        app.toroidy = new Toroidy.Model(3, 7);  //3, 5);
+        app.toroidy = new Toroidy.Model(app, 4, 11, {
+            ringSpacing: 30,
+            segmentMarginOutFactor: 2.3
+        }); //3, 7);  //3, 5);
 
         app.mesh = new THREE.Object3D();
         app.toroidy.addAllMeshsTo(app.mesh);
@@ -55,7 +57,7 @@
         app.mesh.position.y = 150;
 
 
-        if (DEBUG) console.info('Toroidy.Model', app.toroidy);
+        if (DEBUG) console.debug('Toroidy.Model', app.toroidy);
 
         //var geometry = new THREE.BoxGeometry(400, 400, 400);
         //var material = new THREE.MeshBasicMaterial({
