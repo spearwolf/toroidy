@@ -1,6 +1,9 @@
 /**
  * @author mrdoob / http://mrdoob.com/
+ * patched by wolfger@spearwolf.de to use hammer.js for tap events
  */
+
+var Hammer = require('./hammer');
 
 var Stats = function () {
 
@@ -11,7 +14,10 @@ var Stats = function () {
 
 	var container = document.createElement( 'div' );
 	container.id = 'stats';
-	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
+	//container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
+    var hammertime = new Hammer(container);
+	hammertime.on('tap', function (event) { event.preventDefault(); setMode( ++ mode % 2 ) });
+
 	container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer';
 
 	var fpsDiv = document.createElement( 'div' );

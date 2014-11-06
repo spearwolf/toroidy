@@ -2,6 +2,7 @@
     "use strict";
 
     var THREE = require('../lib/three');
+    var DEG2RAD = require('../utils').DEG2RAD;
 
     var Segment = function(ring, degreeBegin, degreeEnd, baseColor) {
 
@@ -33,8 +34,6 @@
         console.debug('you tapped on me ->', this);
     };
 
-    var DEG2RAD = Math.PI / 180.0;
-
     function createShapePoints(seg) {
         seg.shapePoints = [];
 
@@ -49,7 +48,7 @@
             seg.shapePoints.push(new THREE.Vector2(x, y));
         }
 
-        var innerSpread = (seg.degreeInnerOuterEnd - seg.degreeInnerOuterBegin) / divisions;
+        innerSpread = (seg.degreeInnerOuterEnd - seg.degreeInnerOuterBegin) / divisions;
         r = seg.ring.center + seg.ring.halfWidth;
         for (i = divisions; i >= 0; i--) {
             x = r * Math.cos((seg.degreeInnerOuterBegin + (i * innerSpread)) * DEG2RAD);
@@ -65,7 +64,11 @@
 
     function createMesh(seg) {
         seg.mesh = new THREE.Mesh(seg.geometry,
-                new THREE.MeshBasicMaterial({ color: seg.baseColor /*0x333333*/, transparent: true, opacity: 0.8 }));
+                new THREE.MeshBasicMaterial({
+                    color: seg.baseColor /*0x333333*/,
+                    transparent: true,
+                    opacity: 0.8
+                }));
 
         seg.mesh.toroidySegment = seg;
         seg.model.interactiveObjects.push(seg.mesh);

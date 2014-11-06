@@ -56,18 +56,7 @@
 
         app.mesh.position.y = 150;
 
-
         if (DEBUG) console.debug('Toroidy.Model', app.toroidy);
-
-        //var geometry = new THREE.BoxGeometry(400, 400, 400);
-        //var material = new THREE.MeshBasicMaterial({
-            //color: 0xffffaa,
-            //wireframe: true,
-            //wireframeLinewidth: 2*app.DPR
-        //});
-
-        //app.mesh = new THREE.Mesh(geometry, material);
-        //app.scene.add(app.mesh);
     }
 
     function animate(time) {

@@ -25,4 +25,6 @@
         }
     };
 
+    module.exports.DEG2RAD = Math.PI / 180.0;
+
 })();
