@@ -3,9 +3,7 @@
 
     var THREE = require('../lib/three');
 
-    var Segment = function(ring, degreeBegin, degreeEnd) {
-
-        //var margin = ((degreeEnd - degreeBegin) * ring.model.options.segmentMargin) / 2.0;
+    var Segment = function(ring, degreeBegin, degreeEnd, baseColor) {
 
         var innerFactor = (((ring.center - ring.halfWidth) - ring.model.options.ringInnerRadius) / ring.model.radiusRange) * ring.model.options.segmentMarginOutFactor;
         var margin = ((degreeEnd - degreeBegin) * ((innerFactor * ring.model.options.segmentMargin) + ring.model.options.segmentMargin)) / 2.0;
@@ -20,14 +18,15 @@
             degreeInnerOuterBegin: { value: degreeBegin + outerMargin },
             degreeEnd: { value: degreeEnd },
             degreeInnerEnd: { value: degreeEnd - margin },
-            degreeInnerOuterEnd: { value: degreeEnd - outerMargin }
+            degreeInnerOuterEnd: { value: degreeEnd - outerMargin },
+            baseColor: { value: baseColor }
         });
 
         createShapePoints(this);
         createGeometry(this);
         createMesh(this);
 
-        console.debug('Segment', this);
+        //console.debug('Segment', this);
     };
 
     var DEG2RAD = Math.PI / 180.0;
@@ -62,9 +61,9 @@
 
     function createMesh(seg) {
         seg.mesh = new THREE.Mesh(seg.geometry,
-                new THREE.MeshBasicMaterial({ color: 0xfffff0 }));
-        seg.meshWireframe = new THREE.Mesh(seg.geometry,
-                new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true }));
+                new THREE.MeshBasicMaterial({ color: seg.baseColor /*0x333333*/, transparent: true, opacity: 0.8 }));
+        //seg.meshWireframe = new THREE.Mesh(seg.geometry,
+                //new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true }));
     }
 
     module.exports = Segment;

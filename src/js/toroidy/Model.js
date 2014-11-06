@@ -5,12 +5,26 @@
     var Ring = require('./Ring');
 
     var DEFAULT_OPTIONS = {
+
         ringInnerRadius: 100,
         ringWidth: 140,
         ringSpacing: 70,
-        segmentMargin: 0.4,
-        segmentMarginOutFactor: -0.8,
-        segmentDivision: 16
+        segmentMargin: 0.3, //0.4,
+        segmentMarginOutFactor: -0.7,
+        segmentDivision: 16,
+        segmentColors: [
+            0xB58900,
+            0xCB4B16,
+            0xDC322F,
+            0xD33682,
+            0x6C71C4,
+            0x268BD2,
+            0x2AA198,
+            0x859900,
+            0x657B83,
+            0x93A1A1,
+            0x073642
+        ]
     };
 
     var Model = function(ringCount, segmentCount, _options) {

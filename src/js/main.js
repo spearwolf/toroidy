@@ -46,7 +46,7 @@
 
     function init(app) {
 
-        app.toroidy = new Toroidy.Model(3, 5);
+        app.toroidy = new Toroidy.Model(3, 7);  //3, 5);
 
         app.mesh = new THREE.Object3D();
         app.toroidy.addAllMeshsTo(app.mesh);

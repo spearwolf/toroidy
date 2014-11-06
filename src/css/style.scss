@@ -1,4 +1,4 @@
-$bgCol: #08c;
+$bgCol: #FDF6E3; //#ddc; //#08c;
 
 html, body {
     height: 100%;
@@ -8,6 +8,7 @@ html, body {
 
 body {
     background-color: $bgCol;
+    background-image: image-url('img/noise.png');
     overflow: hidden;
 }
 
