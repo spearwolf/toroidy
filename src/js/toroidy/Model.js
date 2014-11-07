@@ -58,9 +58,49 @@
         this.object3d = new THREE.Object3D();
 
         createRings(this);
-
-        app.hammer.on('tap', onTap.bind(this, this));
     };
+
+    //==================================================================//
+    // public methods
+    //==================================================================//
+
+    Model.prototype.tap = function(event) {
+
+        var vector = new THREE.Vector3();
+        vector.set(
+            (event.center.x / this.app.width) * 2 - 1,
+            -(event.center.y / this.app.height) * 2 + 1,
+            0.5 );
+        vector.unproject(this.app.camera);
+
+        this.raycaster.ray.set(
+            this.app.camera.position,
+            vector.sub(this.app.camera.position).normalize() );
+
+        var intersects = this.raycaster.intersectObjects(this.interactiveObjects);
+
+        if (intersects.length > 0) {
+            event.preventDefault();
+
+            var obj = intersects[0].object.toroidySegment;
+            if (obj) obj.onTap();
+        }
+    };
+
+    Model.prototype.destroy = function() {
+        if (this.rings) {
+            this.rings.forEach(function(ring) {
+                ring.destroy();
+            });
+            delete this.rings;
+        }
+        if (this.object3d) {
+            this.app.scene.remove(this.object3d);
+            //this.object3d.dispose();
+            delete this.object3d;
+        }
+    };
+
 
     //==================================================================//
     // private functions
@@ -73,25 +113,6 @@
         for (var i=0; i < model.ringCount; i++) {
             model.rings[i] = new Ring(model, radius + halfWidth, "r"+i);
             radius += model.options.ringWidth + model.options.ringSpacing;
-        }
-    }
-
-    function onTap(model, event) {
-        //console.debug('tap!', model, event);
-
-        var vector = new THREE.Vector3();
-        vector.set((event.center.x / model.app.width) * 2 - 1, - (event.center.y / model.app.height) * 2 + 1, 0.5);
-        vector.unproject(model.app.camera);
-
-        model.raycaster.ray.set(model.app.camera.position, vector.sub(model.app.camera.position).normalize());
-
-        var intersects = model.raycaster.intersectObjects(model.interactiveObjects);
-        if (intersects.length > 0) {
-            event.preventDefault();
-            var obj = intersects[0].object.toroidySegment;
-            if (obj) {
-                obj.onTap();
-            }
         }
     }
 

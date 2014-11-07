@@ -2,6 +2,7 @@
     "use strict";
 
     var THREE = require('../lib/three');
+    var TWEEN = require('../lib/Tween');
     var utils = require('../utils');
     var Segment = require('./Segment');
 
@@ -54,7 +55,6 @@
         }
         var rotMatrix = new THREE.Matrix4();
         rotMatrix.makeRotationAxis(axis.normalize(), degree * utils.DEG2RAD);
-        //rotMatrix.multiply(this.object3d.matrix);
         rotMatrix.multiply(obj3dMatrix);
         this.object3d.matrix = rotMatrix;
         this.object3d.rotation.setFromRotationMatrix(this.object3d.matrix);
@@ -64,6 +64,22 @@
         this.restoreObject3dMatrix = this.object3d.matrix.clone();
     };
 
-    module.exports = Ring;
+    Ring.prototype.destroy = function() {
+        if (this.segments) {
+            this.segments.forEach(function(seg) {
+                seg.destroy();
+            });
+            delete this.segments;
+        }
+        //if (this.object3d) {
+            //this.object3d.dispose();
+            //delete this.object3d;
+        //}
+        if (this.curTween) {
+            TWEEN.remove(this.curTween);
+            delete this.curTween;
+        }
+    };
 
+    module.exports = Ring;
 })();

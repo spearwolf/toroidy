@@ -80,18 +80,19 @@
 
     function createGeometry(seg) {
         var shape = new THREE.Shape(seg.shapePoints);
-        seg.geometry = new THREE.BufferGeometry().fromGeometry(new THREE.ShapeGeometry(shape));
+        var shapeGeometry = new THREE.ShapeGeometry(shape);
+        seg.geometry = new THREE.BufferGeometry().fromGeometry(shapeGeometry);
+        shapeGeometry.dispose();
     }
 
     function createMesh(seg) {
-        seg.mesh = new THREE.Mesh(seg.geometry,
-                new THREE.MeshBasicMaterial({
-                    color: seg.baseColor /*0x333333*/,
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    opacity: 0.8
-                }));
-
+        seg.material = new THREE.MeshBasicMaterial({
+                color: seg.baseColor /*0x333333*/,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.8
+            });
+        seg.mesh = new THREE.Mesh(seg.geometry, seg.material);
         seg.mesh.toroidySegment = seg;
     }
 
@@ -103,7 +104,7 @@
                 seg.ring.rotateAroundAxis(seg.ringRotationAxis, this.degree);
             })
             .onComplete(function() {
-                seg.ring.hasTween = false;
+                delete seg.ring.curTween;
                 seg.ring.saveObject3dMatrix();
                 seg.ring.segments.forEach(function(_seg) {
                     _seg.ringRotationAxis.applyAxisAngle(seg.ringRotationAxis, 180.0 * DEG2RAD);
@@ -111,7 +112,7 @@
             })
             ;
         seg.ring.saveObject3dMatrix();
-        seg.ring.hasTween = true;
+        seg.ring.curTween = tween;
         tween.start();
     }
 
@@ -120,18 +121,32 @@
     //==================================================================//
 
     Segment.prototype.rotateRing = function() {
-        if (!this.ring.hasTween) {
+        if (!this.ring.curTween) {
             createRingRotationTween(this);
         }
     };
 
     Segment.prototype.onTap = function() {
         console.debug('you tapped on me ->', this);
-        
         this.rotateRing();
+    };
+
+    Segment.prototype.destroy = function() {
+        if (this.shapePoints) delete this.shapePoints;
+        if (this.geometry) {
+            this.geometry.dispose();
+            delete this.geometry;
+        }
+        if (this.material) {
+            this.material.dispose();
+            delete this.material;
+        }
+        //if (this.mesh) {
+            //this.mesh.dispose();
+            //delete this.mesh;
+        //}
     };
 
 
     module.exports = Segment;
-
 })();

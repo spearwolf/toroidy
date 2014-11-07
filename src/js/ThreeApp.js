@@ -26,6 +26,7 @@
         Object.defineProperty(this, 'renderer', {
             value: new THREE.WebGLRenderer({ alpha: options.alpha })
         });
+
         this.renderer.autoClear = options.autoClear;
 
         if (options.onResize) this.onResize = options.onResize;

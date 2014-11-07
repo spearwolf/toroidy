@@ -18,3 +18,30 @@ body {
     left: 0;
 }
 
+#toroidy-reset {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+.toroidy-action {
+    font-family: Courier, monospace;
+    font-size: 15px;
+    line-height: 18px;
+    padding: 8px;
+    margin: 0;
+    background-color: #555;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.5;
+    &:hover {
+        opacity: 0.9;
+    }
+    -webkit-appearance: none;
+    border: 0;
+    border-radius: 1px;
+    outline: none;
+    text-transform: uppercase;
+}
+

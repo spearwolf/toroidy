@@ -6,8 +6,7 @@
     //====================================================================//
 
     var THREE = require('./lib/three');
-    //var TWEEN = require('./lib/Tween');
-    var dat = require('./lib/dat.gui');
+    var Hammer = require('./lib/hammer');
     var utils = require('./utils');
     var ThreeApp = require('./ThreeApp');
     var Toroidy = require('./toroidy');
@@ -17,10 +16,7 @@
     //====================================================================//
 
     var DEBUG = true;
-
-    var app, gui
-     ,  params = { scaleX: 1.0, scaleY: 1.0, scaleZ: 1.0 }
-     ;
+    var app;
 
     //====================================================================//
     // main()
@@ -35,7 +31,6 @@
             window.threeApp = app;
         }
 
-        //init_dat_gui();
         utils.preventDefaultTouchEvents();
     };
 
@@ -45,38 +40,40 @@
 
     function init(app) {
 
-        app.toroidy = new Toroidy.Model(app, 3, 3, { //4, 11, {
-            //ringSpacing: 30,
-            //segmentMarginOutFactor: 2.3
-        }); //3, 7);  //3, 5);
+        app.createToroidy = function() {
+            if (app.toroidy) app.toroidy.destroy();
 
-        app.scene.add(app.toroidy.object3d);
-        app.toroidy.object3d.position.y = 150;
+            app.toroidy = new Toroidy.Model(app, 4, 5, { //4, 11, {
+                ringSpacing: 30,
+                segmentMarginOutFactor: 1  //2.3
+            }); //3, 7);  //3, 5);
 
-        if (DEBUG) console.debug('Toroidy.Model', app.toroidy);
+            app.scene.add(app.toroidy.object3d);
+            app.toroidy.object3d.position.y = 150;
+
+            if (DEBUG) console.debug('Toroidy.Model', app.toroidy);
+        };
+
+        app.createToroidy();
+
+        app.hammer.on('tap', function(event) {
+            if (app.toroidy) app.toroidy.tap(event);
+        });
+
+        var toroidyReset = new Hammer(document.getElementById('toroidy-reset'));
+        toroidyReset.on('tap', function(event) {
+            event.preventDefault();
+            app.createToroidy();
+        });
     }
 
     function animate(time) {
 
-        var obj3d = app.toroidy.object3d;
-        if (obj3d) {
-            obj3d.scale.x = params.scaleX;
-            obj3d.scale.y = params.scaleY;
-            obj3d.scale.z = params.scaleZ;
-
+        if (app.toroidy) {
+            var obj3d = app.toroidy.object3d;
             obj3d.rotation.x = -0.6;
             obj3d.rotation.z += 0.005;
         }
-    }
-
-    function init_dat_gui() {
-        gui = new dat.GUI({
-            height: 3 * 32 - 1
-        });
-
-        gui.add(params, 'scaleX').min(0.1).max(5.0).name('Scale X');
-        gui.add(params, 'scaleY').min(0.1).max(5.0).name('Scale Y');
-        gui.add(params, 'scaleZ').min(0.1).max(5.0).name('Scale Z');
     }
 
 })();
