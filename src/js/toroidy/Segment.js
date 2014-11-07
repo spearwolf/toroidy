@@ -105,6 +105,9 @@
             .onComplete(function() {
                 seg.ring.hasTween = false;
                 seg.ring.saveObject3dMatrix();
+                seg.ring.segments.forEach(function(_seg) {
+                    _seg.ringRotationAxis.applyAxisAngle(seg.ringRotationAxis, 180.0 * DEG2RAD);
+                });
             })
             ;
         seg.ring.saveObject3dMatrix();

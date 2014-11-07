@@ -45,9 +45,9 @@
 
     function init(app) {
 
-        app.toroidy = new Toroidy.Model(app, 4, 11, {
-            ringSpacing: 30,
-            segmentMarginOutFactor: 2.3
+        app.toroidy = new Toroidy.Model(app, 3, 3, { //4, 11, {
+            //ringSpacing: 30,
+            //segmentMarginOutFactor: 2.3
         }); //3, 7);  //3, 5);
 
         app.scene.add(app.toroidy.object3d);
