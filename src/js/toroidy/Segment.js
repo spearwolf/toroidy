@@ -2,6 +2,7 @@
     "use strict";
 
     var THREE = require('../lib/three');
+    var TWEEN = require('../lib/Tween');
     var DEG2RAD = require('../utils').DEG2RAD;
 
     //==================================================================//
@@ -34,11 +35,25 @@
 
         ring.object3d.add(this.mesh);
         ring.model.interactiveObjects.push(this.mesh);
+
+        createRingRotationAxis(this);
     };
 
     //==================================================================//
     // private functions
     //==================================================================//
+
+    function createRingRotationAxis(seg) {
+        var a = new THREE.Vector3(
+                seg.ring.center * Math.cos(seg.degreeBegin * DEG2RAD),
+                seg.ring.center * Math.sin(seg.degreeBegin * DEG2RAD),
+                0 );
+        seg.ringRotationAxis = new THREE.Vector3(
+                seg.ring.center * Math.cos(seg.degreeEnd * DEG2RAD),
+                seg.ring.center * Math.sin(seg.degreeEnd * DEG2RAD),
+                0 );
+        seg.ringRotationAxis.sub(a);
+    }
 
     function createShapePoints(seg) {
         seg.shapePoints = [];
@@ -72,6 +87,7 @@
         seg.mesh = new THREE.Mesh(seg.geometry,
                 new THREE.MeshBasicMaterial({
                     color: seg.baseColor /*0x333333*/,
+                    side: THREE.DoubleSide,
                     transparent: true,
                     opacity: 0.8
                 }));
@@ -79,12 +95,37 @@
         seg.mesh.toroidySegment = seg;
     }
 
+    function createRingRotationTween(seg) {
+        var tween = new TWEEN.Tween({ degree: 0 })
+            .to({ degree: 180.0 })
+            .easing(TWEEN.Easing.Cubic.Out)
+            .onUpdate(function() {
+                seg.ring.rotateAroundAxis(seg.ringRotationAxis, this.degree);
+            })
+            .onComplete(function() {
+                seg.ring.hasTween = false;
+                seg.ring.saveObject3dMatrix();
+            })
+            ;
+        seg.ring.saveObject3dMatrix();
+        seg.ring.hasTween = true;
+        tween.start();
+    }
+
     //==================================================================//
     // public methods
     //==================================================================//
 
+    Segment.prototype.rotateRing = function() {
+        if (!this.ring.hasTween) {
+            createRingRotationTween(this);
+        }
+    };
+
     Segment.prototype.onTap = function() {
         console.debug('you tapped on me ->', this);
+        
+        this.rotateRing();
     };
 
 

@@ -2,6 +2,7 @@
     "use strict";
 
     var THREE = require('./lib/three');
+    var TWEEN = require('./lib/Tween');
     var Stats = require('./lib/Stats');
     var Hammer = require('./lib/hammer');
     var utils = require('./utils');
@@ -94,6 +95,8 @@
         if ('function' === typeof this.onRender) {
             this.onRender(time, this);
         }
+
+        TWEEN.update(time);
 
         this.renderer.render(this.scene, this.camera);
 

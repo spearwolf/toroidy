@@ -2,6 +2,7 @@
     "use strict";
 
     var THREE = require('../lib/three');
+    var utils = require('../utils');
     var Segment = require('./Segment');
 
     //==================================================================//
@@ -42,6 +43,26 @@
         }
     }
 
+    //==================================================================//
+    // public methods
+    //==================================================================//
+
+    Ring.prototype.rotateAroundAxis = function(axis, degree) {
+        var obj3dMatrix = this.restoreObject3dMatrix;
+        if (!obj3dMatrix) {
+            obj3dMatrix = this.object3d.matrix;
+        }
+        var rotMatrix = new THREE.Matrix4();
+        rotMatrix.makeRotationAxis(axis.normalize(), degree * utils.DEG2RAD);
+        //rotMatrix.multiply(this.object3d.matrix);
+        rotMatrix.multiply(obj3dMatrix);
+        this.object3d.matrix = rotMatrix;
+        this.object3d.rotation.setFromRotationMatrix(this.object3d.matrix);
+    };
+
+    Ring.prototype.saveObject3dMatrix = function() {
+        this.restoreObject3dMatrix = this.object3d.matrix.clone();
+    };
 
     module.exports = Ring;
 
