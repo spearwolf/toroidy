@@ -4,7 +4,11 @@
     var THREE = require('../lib/three');
     var DEG2RAD = require('../utils').DEG2RAD;
 
-    var Segment = function(ring, degreeBegin, degreeEnd, baseColor) {
+    //==================================================================//
+    // Segment constructor
+    //==================================================================//
+
+    var Segment = function(ring, degreeBegin, degreeEnd, baseColor, id) {
 
         var innerFactor = (((ring.center - ring.halfWidth) - ring.model.options.ringInnerRadius) / ring.model.radiusRange) * ring.model.options.segmentMarginOutFactor;
         var margin = ((degreeEnd - degreeBegin) * ((innerFactor * ring.model.options.segmentMargin) + ring.model.options.segmentMargin)) / 2.0;
@@ -12,6 +16,7 @@
         var outerMargin = ((degreeEnd - degreeBegin) * ((outerFactor * ring.model.options.segmentMargin) + ring.model.options.segmentMargin)) / 2.0;
 
         Object.defineProperties(this, {
+            id: { value: id },
             ring: { value: ring },
             model: { value: ring.model },
             degreeBegin: { value: degreeBegin },
@@ -27,12 +32,13 @@
         createGeometry(this);
         createMesh(this);
 
-        //console.debug('Segment', this);
+        ring.object3d.add(this.mesh);
+        ring.model.interactiveObjects.push(this.mesh);
     };
 
-    Segment.prototype.onTap = function() {
-        console.debug('you tapped on me ->', this);
-    };
+    //==================================================================//
+    // private functions
+    //==================================================================//
 
     function createShapePoints(seg) {
         seg.shapePoints = [];
@@ -71,8 +77,17 @@
                 }));
 
         seg.mesh.toroidySegment = seg;
-        seg.model.interactiveObjects.push(seg.mesh);
     }
 
+    //==================================================================//
+    // public methods
+    //==================================================================//
+
+    Segment.prototype.onTap = function() {
+        console.debug('you tapped on me ->', this);
+    };
+
+
     module.exports = Segment;
+
 })();

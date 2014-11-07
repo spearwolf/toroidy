@@ -50,25 +50,22 @@
             segmentMarginOutFactor: 2.3
         }); //3, 7);  //3, 5);
 
-        app.mesh = new THREE.Object3D();
-        app.toroidy.addAllMeshsTo(app.mesh);
-        app.scene.add(app.mesh);
-
-        app.mesh.position.y = 150;
+        app.scene.add(app.toroidy.object3d);
+        app.toroidy.object3d.position.y = 150;
 
         if (DEBUG) console.debug('Toroidy.Model', app.toroidy);
     }
 
     function animate(time) {
 
-        if (app.mesh) {
-            app.mesh.scale.x = params.scaleX;
-            app.mesh.scale.y = params.scaleY;
-            app.mesh.scale.z = params.scaleZ;
+        var obj3d = app.toroidy.object3d;
+        if (obj3d) {
+            obj3d.scale.x = params.scaleX;
+            obj3d.scale.y = params.scaleY;
+            obj3d.scale.z = params.scaleZ;
 
-            app.mesh.rotation.x = -0.6;
-            //app.mesh.rotation.y += 0.02;
-            app.mesh.rotation.z += 0.005;
+            obj3d.rotation.x = -0.6;
+            obj3d.rotation.z += 0.005;
         }
     }
 

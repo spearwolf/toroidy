@@ -13,6 +13,7 @@
         segmentMargin: 0.3, //0.4,
         segmentMarginOutFactor: -0.7,
         segmentDivision: 16,
+
         segmentColors: [
             0xB58900,
             0xCB4B16,
@@ -28,23 +29,18 @@
         ]
     };
 
+    //==================================================================//
+    // Model constructor
+    //==================================================================//
 
     var Model = function(app, ringCount, segmentCount, _options) {
 
         this.options = Object.freeze(utils.makeOptions(_options, DEFAULT_OPTIONS));
 
-        //console.log('Toroidy.Model, rings=', ringCount, 'segments=', segmentCount, "options=", this.options);
-
         Object.defineProperties(this, {
-            app: {
-                value: app
-            },
-            ringCount: {
-                value: ringCount
-            },
-            segmentCount: {
-                value: segmentCount
-            },
+            app: { value: app },
+            ringCount: { value: ringCount },
+            segmentCount: { value: segmentCount },
             outerRadius: {
                 value: this.options.ringInnerRadius + (ringCount * (this.options.ringWidth + this.options.ringSpacing))
             }
@@ -59,57 +55,46 @@
         this.raycaster = new THREE.Raycaster();
         this.interactiveObjects = [];
 
+        this.object3d = new THREE.Object3D();
+
         createRings(this);
 
-        //app.domElement.addEventListener('mousedown', onTap.bind(this, this), false);
         app.hammer.on('tap', onTap.bind(this, this));
     };
 
-    function onTap(model, event) {
-        //console.debug('tap!', model, event);
-        try {
-
-            var vector = new THREE.Vector3();
-            vector.set((event.center.x / model.app.width) * 2 - 1, - (event.center.y / model.app.height) * 2 + 1, 0.5);
-            vector.unproject(model.app.camera);
-
-            model.raycaster.ray.set(model.app.camera.position, vector.sub(model.app.camera.position).normalize());
-
-            var intersects = model.raycaster.intersectObjects(model.interactiveObjects);
-            if (intersects.length > 0) {
-                event.preventDefault();
-                //console.debug('intersects=', intersects[0]);
-                var obj = intersects[0].object.toroidySegment;
-                if (obj) {
-                    obj.onTap();
-                }
-            //} else {
-                //console.debug('.. you clicked on nothing!');
-            }
-
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    Model.prototype.addAllMeshsTo = function(scene) {
-        this.rings.forEach(function(ring) {
-            ring.segments.forEach(function(seg) {
-                scene.add(seg.mesh);
-                //scene.add(seg.meshWireframe);
-            });
-        });
-    };
+    //==================================================================//
+    // private functions
+    //==================================================================//
 
     function createRings(model) {
         model.rings = new Array(model.ringCount);
         var radius = model.options.ringInnerRadius;
         var halfWidth = model.options.ringWidth / 2.0;
         for (var i=0; i < model.ringCount; i++) {
-            model.rings[i] = new Ring(model, radius + halfWidth);
+            model.rings[i] = new Ring(model, radius + halfWidth, "r"+i);
             radius += model.options.ringWidth + model.options.ringSpacing;
         }
     }
+
+    function onTap(model, event) {
+        //console.debug('tap!', model, event);
+
+        var vector = new THREE.Vector3();
+        vector.set((event.center.x / model.app.width) * 2 - 1, - (event.center.y / model.app.height) * 2 + 1, 0.5);
+        vector.unproject(model.app.camera);
+
+        model.raycaster.ray.set(model.app.camera.position, vector.sub(model.app.camera.position).normalize());
+
+        var intersects = model.raycaster.intersectObjects(model.interactiveObjects);
+        if (intersects.length > 0) {
+            event.preventDefault();
+            var obj = intersects[0].object.toroidySegment;
+            if (obj) {
+                obj.onTap();
+            }
+        }
+    }
+
 
     module.exports = Model;
 })();
