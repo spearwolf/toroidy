@@ -80,7 +80,7 @@
 
     function createGeometry(seg) {
         var shape = new THREE.Shape(seg.shapePoints);
-        seg.geometry = new THREE.ShapeGeometry(shape);
+        seg.geometry = new THREE.BufferGeometry().fromGeometry(new THREE.ShapeGeometry(shape));
     }
 
     function createMesh(seg) {
